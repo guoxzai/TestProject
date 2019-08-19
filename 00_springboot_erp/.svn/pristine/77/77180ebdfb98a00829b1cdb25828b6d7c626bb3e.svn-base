@@ -1,0 +1,29 @@
+package com.gxz.bus.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.gxz.bus.domain.Sales;
+import com.gxz.bus.mapper.SalesMapper;
+import com.gxz.bus.service.SalesService;
+import com.gxz.bus.vo.SalesVo;
+import com.gxz.sys.utils.json.DataGridView;
+
+@Service
+public class SalesServiceImpl implements SalesService {
+
+	@Autowired
+	private SalesMapper salesMapper;
+
+	@Override
+	public DataGridView queryAllSales(SalesVo salesVo) {
+		Page<Object> page = PageHelper.startPage(salesVo.getPage(), salesVo.getLimit());
+		List<Sales> data = salesMapper.queryAllSales(salesVo);
+		return new DataGridView(page.getTotal(), data);
+	}
+	
+}

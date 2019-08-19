@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8">
+	<title>日志管理</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="/resources/layui/css/layui.css" media="all" />
+	<link rel="stylesheet" href="/resources/css/public.css" media="all" />
+	<style type="text/css">
+		.layui-btn {
+		    height: 30px;
+		    line-height: 30px;
+		}
+	</style>
+</head>
+<body class="childrenBody">
+<!-- 模糊查询条件开始 -->
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+  <legend>用户查询</legend>
+</fieldset>
+<form class="layui-form" action="" style="text-align: center;" id="searchFrm">
+	 <div class="layui-form-item">
+    <div class="layui-inline">
+      <label class="layui-form-label">登录用户名</label>
+      <div class="layui-input-inline">
+        <input type="text" name="loginname" autocomplete="off" placeholder="请输入登陆用户名" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-inline">
+      <label class="layui-form-label">登录IP</label>
+      <div class="layui-input-inline">
+        <input type="text" name="loginip" id="date" autocomplete="off" placeholder="请输入登陆IP" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-inline">
+      <label class="layui-form-label">开始时间</label>
+      <div class="layui-input-inline">
+        <input type="tel" name="startTime" id="startTime" autocomplete="off" placeholder="请选择开始时间" class="layui-input">
+      </div>
+    </div>
+     <div class="layui-inline">
+      <label class="layui-form-label">结束时间</label>
+      <div class="layui-input-inline">
+        <input type="tel" name="endTime" id="endTime" autocomplete="off" placeholder="请选择结束时间" class="layui-input">
+      </div>
+    </div>
+  </div>
+  
+  <div class="layui-form-item" style="text-align: center;">
+    <div class="layui-input-block">
+      <button type="button" id="doSearch" class="layui-btn" lay-submit="" lay-filter="doSearch">查询</button>
+      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+  </div>
+</form>
+<!-- 模糊查询条件结束 -->
+
+<div id="tableToolBar" style="display: none;" lay-filter="tableToolBar">
+	<button type="button" class="layui-btn  layui-btn-sm layui-btn-danger" lay-event="batchDelete">批量删除</button>
+</div>
+
+<!-- 数据表单开始 -->
+<table  id="loginInfodata" lay-filter="test"></table>
+ 
+<div id="toolbar" style="display: none;" lay-filter="toolbar">
+	<button class="layui-btn layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i></button>
+</div>
+<!-- 数据表单结束 -->
+ 
+<script src="/resources/layui/layui.js"></script>
+<script>
+layui.use(['jquery','table','form','laydate'], function(){
+  var $ = layui.jquery;
+  var table = layui.table;
+  var form = layui.form;
+  var laydate = layui.laydate;
+  
+  laydate.render({
+	    elem: '#startTime' //指定元素
+	    ,type: 'datetime'
+   });
+  laydate.render({
+	    elem: '#endTime' //指定元素
+	    ,type: 'datetime'
+   });
+  
+	//第一个实例
+  var tableIns = table.render({
+    elem: '#loginInfodata'
+    ,cellMinWidth: 80
+    ,height: 'full-210'
+    ,url: '/loginInfo/loadAllLoginInfo' //数据接口
+   	, done: function(curr, count){
+       	layer.msg("欢迎来到日志管理");
+    }
+    ,page: true //开启分页
+  	,limit:8
+  	,limits:[5,10,15,20,25,30,50]
+  	,toolbar:"#tableToolBar"
+  	,defaultToolbar: ['filter', 'print']
+    ,cols: [ [ 
+       {type:'checkbox'}
+      ,{field: 'id', title: 'ID', sort: true,align:'center'}
+      ,{field: 'loginname', title: '登录名',align:'center'}
+      ,{field: 'loginip', title: '登录IP',align:'center'}
+      ,{field: 'logintime', title: '登录时间',align:'center'} 
+      ,{title:'操作',width:140,	align:'center',toolbar:'#toolbar',fixed: 'right'}
+    ] ]
+  	,text: {
+  	    none: '亲！暂无相关数据' //默认：无数据。注：该属性为 layui 2.2.5 开始新增
+    }
+  });
+	
+  
+  $("#doSearch").click(function(){
+	  var params =  $("#searchFrm").serialize();
+	  tableIns.reload({url:"/loginInfo/loadAllLoginInfo?"+params});
+  });
+  
+  table.on('toolbar(test)', function(obj){
+	    switch(obj.event){
+	      case 'batchDelete':
+	        var checkStatus = table.checkStatus('loginInfodata');//test就是<table id="test">
+	        
+	        var data = checkStatus.data;
+			//console.log(typeof checkStatus.data+"-->"+checkStatus.data.length);
+	        var batchIds="";
+	        for(var i=0;i<data.length;i++){
+	        	batchIds+=data[i].id+",";
+	        }
+	        
+	        var ids = batchIds.substring(0,batchIds.length-1);
+        	layer.confirm('确定删除ID为'+ids+'日志？',{icon:3, title:'提示信息'},function(index){
+	            $.post("/loginInfo/batchDeleteLoginInfo",{
+	            	batchIds : ids  //将需要删除的id作为参数传入
+	            },function(data){
+	           	   tableIns.reload();
+	           	   layer.msg(data.msg);
+	               layer.close(index);
+	            },"json");
+	        }); 
+	       break;
+	    };
+	});
+
+  
+  table.on('tool(test)', function(obj){
+	  var data = obj.data;
+	  switch(obj.event){
+	    case 'delete':
+	    	layer.confirm('确定删除此日志？',{icon:3, title:'提示信息'},function(index){
+	            $.post("/loginInfo/deleteLoginInfo",{
+	                id : data.id  //将需要删除的id作为参数传入
+	            },function(data){
+	           	 tableIns.reload();
+	           	 layer.msg(data.msg);
+	               layer.close(index);
+	            },"json");
+	       });
+	    break;
+	  };
+  });
+  
+});
+</script>
+</body>
+</html>

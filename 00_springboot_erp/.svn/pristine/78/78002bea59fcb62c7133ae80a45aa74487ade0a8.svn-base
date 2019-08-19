@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>销售管理</title>
+</head>
+<frameset cols="220,*" border="1" frameborder="yes">
+    <frame src="/bus/toSalesLeftManager" name="left"/>
+    <frame src="/bus/toSalesRightManager" name="main"/>
+</frameset>
+</html>
+

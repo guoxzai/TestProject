@@ -1,0 +1,110 @@
+package com.gxz.bus.controller;
+
+import java.io.File;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.gxz.bus.service.GoodsService;
+import com.gxz.bus.vo.GoodsVo;
+import com.gxz.sys.constast.SYSConstast;
+import com.gxz.sys.utils.json.DataGridView;
+import com.gxz.sys.utils.json.ResultObj;
+
+@RestController
+@RequestMapping("goods")
+public class GoodsController {
+
+	@Autowired
+	private GoodsService goodsService;
+	
+	@Value("${upload.uploadPath}")
+	private String uploadPath;
+	
+	@RequestMapping("loadAllGoods")
+	public DataGridView loadAllGoods(GoodsVo goodsVo) {
+		return goodsService.queryAllGoods(goodsVo);
+	}
+	
+	@RequestMapping("addGoods")
+	public ResultObj addGoods(GoodsVo goodsVo) {
+		ResultObj resultObj = null;
+		try {
+			goodsService.addGoods(goodsVo);
+			resultObj = new ResultObj(1,SYSConstast.SYS_OPTION_ADD_SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultObj = new ResultObj(0,SYSConstast.SYS_OPTION_ADD_ERROR);
+		}
+		
+		return resultObj;
+	}
+	
+	@RequestMapping("updateGoods")
+	public ResultObj updateGoods(GoodsVo goodsVo) {
+		ResultObj resultObj = null;
+		try {
+			goodsService.updateGoods(goodsVo);
+			resultObj = new ResultObj(1,SYSConstast.SYS_OPTION_UPDATE_SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultObj = new ResultObj(0,SYSConstast.SYS_OPTION_UPDATE_ERROR);
+		}
+		
+		return resultObj;
+	}
+	
+	@RequestMapping("deleteGoods")
+	public ResultObj deleteGoods(GoodsVo goodsVo) {
+		File file = new File(uploadPath,goodsVo.getGoodsimg());
+		if(file.exists() && !file.getName().equals("defaultimg.png")) {
+			file.delete();
+		}
+		
+		ResultObj resultObj = null;
+		try {
+			goodsService.deleteGoods(goodsVo.getId());
+			resultObj = new ResultObj(1,SYSConstast.SYS_OPTION_DELETE_SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultObj = new ResultObj(0,SYSConstast.SYS_OPTION_DELETE_ERROR);
+		}
+		
+		return resultObj;
+	}
+	
+	@RequestMapping("batchDeleteGoods")
+	public ResultObj batchDeleteGoods(GoodsVo goodsVo) {
+		String batchIds = goodsVo.getBatchIds();
+		String[] ids = batchIds.split(",");
+		
+		String[] imgs = goodsVo.getGoodsimgs().split(",");
+		
+		ResultObj resultObj = null;
+		try {
+			if(null!=ids && ids.length>0) {
+				if(null!=imgs && imgs.length>0) {
+					for (String img : imgs) {
+						File file = new File(uploadPath,img);
+						if(file.exists() && !file.getName().equals("defaultimg.png")) {
+							file.delete();
+						}
+					}
+				}
+				
+				for (String id : ids) {
+					goodsService.deleteGoods(Integer.parseInt(id));
+				}
+				
+			}
+			resultObj = new ResultObj(1,SYSConstast.SYS_OPTION_DELETE_SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultObj = new ResultObj(0,SYSConstast.SYS_OPTION_DELETE_ERROR);
+		}
+		
+		return resultObj;
+	}
+}

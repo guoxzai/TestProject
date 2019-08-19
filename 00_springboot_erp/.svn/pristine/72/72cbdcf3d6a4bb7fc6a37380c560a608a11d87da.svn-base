@@ -1,0 +1,18 @@
+package com.gxz.sys.service;
+
+import java.util.List;
+
+import com.gxz.sys.domain.Permission;
+import com.gxz.sys.utils.json.DataGridView;
+import com.gxz.sys.vo.PermissionVo;
+
+public interface PermissionService {
+	//查询所有菜单
+	List<Permission> queryAllPermission(PermissionVo permissionVo);
+	//根据用户ID查询菜单
+	
+	DataGridView queryAllRightDataGrid(PermissionVo permissionVo);
+
+	void addPermission(PermissionVo permissionVo);
+	void updatePermission(PermissionVo permissionVo);
+}

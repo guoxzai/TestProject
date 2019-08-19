@@ -1,0 +1,23 @@
+package com.gxz.bus.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.gxz.bus.service.SalesService;
+import com.gxz.bus.vo.SalesVo;
+import com.gxz.sys.utils.json.DataGridView;
+
+@RestController
+@RequestMapping("sales")
+public class SalesController {
+
+	@Autowired
+	private SalesService salesService;
+	
+	@RequestMapping("loadAllRightSales")
+	private DataGridView loadAllSales(SalesVo salesVo) {
+		return salesService.queryAllSales(salesVo);
+	}
+	
+}

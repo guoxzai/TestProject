@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gxz.bus.mapper.SalesMapper" >
+  <resultMap id="BaseResultMap" type="com.gxz.bus.domain.Sales" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="paytype" property="paytype" jdbcType="INTEGER" />
+    <result column="salestime" property="salestime" jdbcType="TIMESTAMP" />
+    <result column="operateperson" property="operateperson" jdbcType="VARCHAR" />
+    <result column="number" property="number" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="saleprice" property="saleprice" jdbcType="DOUBLE" />
+    <result column="customerid" property="customerid" jdbcType="INTEGER" />
+    <result column="goodsid" property="goodsid" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, paytype, salestime, operateperson, number, remark, saleprice, customerid, goodsid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from bus_sales
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from bus_sales
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.gxz.bus.domain.Sales" >
+    insert into bus_sales (paytype, salestime, 
+      operateperson, number, remark, 
+      saleprice, customerid, goodsid
+      )
+    values (#{paytype,jdbcType=INTEGER}, #{salestime,jdbcType=TIMESTAMP}, 
+      #{operateperson,jdbcType=VARCHAR}, #{number,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, 
+      #{saleprice,jdbcType=DOUBLE}, #{customerid,jdbcType=INTEGER}, #{goodsid,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.gxz.bus.domain.Sales" >
+    insert into bus_sales
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+     
+      <if test="paytype != null" >
+        paytype,
+      </if>
+      <if test="salestime != null" >
+        salestime,
+      </if>
+      <if test="operateperson != null" >
+        operateperson,
+      </if>
+      <if test="number != null" >
+        number,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="saleprice != null" >
+        saleprice,
+      </if>
+      <if test="customerid != null" >
+        customerid,
+      </if>
+      <if test="goodsid != null" >
+        goodsid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      
+      <if test="paytype != null" >
+        #{paytype,jdbcType=INTEGER},
+      </if>
+      <if test="salestime != null" >
+        #{salestime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operateperson != null" >
+        #{operateperson,jdbcType=VARCHAR},
+      </if>
+      <if test="number != null" >
+        #{number,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="saleprice != null" >
+        #{saleprice,jdbcType=DOUBLE},
+      </if>
+      <if test="customerid != null" >
+        #{customerid,jdbcType=INTEGER},
+      </if>
+      <if test="goodsid != null" >
+        #{goodsid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.gxz.bus.domain.Sales" >
+    update bus_sales
+    <set >
+      <if test="paytype != null" >
+        paytype = #{paytype,jdbcType=INTEGER},
+      </if>
+      <if test="salestime != null" >
+        salestime = #{salestime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operateperson != null" >
+        operateperson = #{operateperson,jdbcType=VARCHAR},
+      </if>
+      <if test="number != null" >
+        number = #{number,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="saleprice != null" >
+        saleprice = #{saleprice,jdbcType=DOUBLE},
+      </if>
+      <if test="customerid != null" >
+        customerid = #{customerid,jdbcType=INTEGER},
+      </if>
+      <if test="goodsid != null" >
+        goodsid = #{goodsid,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.gxz.bus.domain.Sales" >
+    update bus_sales
+    set paytype = #{paytype,jdbcType=INTEGER},
+      salestime = #{salestime,jdbcType=TIMESTAMP},
+      operateperson = #{operateperson,jdbcType=VARCHAR},
+      number = #{number,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR},
+      saleprice = #{saleprice,jdbcType=DOUBLE},
+      customerid = #{customerid,jdbcType=INTEGER},
+      goodsid = #{goodsid,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <resultMap id="MyBaseResultMap" type="com.gxz.bus.domain.Sales" extends="BaseResultMap">
+    <result column="goodsname" property="goodsname" jdbcType="VARCHAR" />
+    <result column="customername" property="customername" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="queryAllSales" resultMap="MyBaseResultMap">
+  	SELECT t1.*,t2.customername as customername,t3.goodsname as goodsname FROM bus_sales t1 INNER JOIN bus_customer t2
+	INNER JOIN bus_goods t3 ON(t1.customerid = t2.id and t1.goodsid=t3.id)
+	<where>
+		<if test="goodsname!=null and goodsname!=''">
+			and goodsname like concat('%',#{goodsname},'%')
+		</if>
+		<if test="customername!=null and customername!=''">
+			and customername like concat('%',#{customername},'%')
+		</if>
+		<if test="operateperson!=null and operateperson!=''">
+			and t1.operateperson like concat('%',#{operateperson},'%')
+		</if>
+		<if test="customerid!=null">
+			and t1.customerid =#{customerid}
+		</if>
+		<if test="goodsid!=null">
+			and t1.goodsid =#{goodsid}
+		</if>
+	</where>
+	order by salestime desc  	
+  </select>
+  
+</mapper>

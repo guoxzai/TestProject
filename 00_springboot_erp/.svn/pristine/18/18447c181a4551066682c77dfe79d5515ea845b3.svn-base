@@ -1,0 +1,86 @@
+package com.gxz.bus.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.gxz.bus.service.CustomerService;
+import com.gxz.bus.vo.CustomerVo;
+import com.gxz.sys.constast.SYSConstast;
+import com.gxz.sys.utils.json.DataGridView;
+import com.gxz.sys.utils.json.ResultObj;
+
+
+@RestController	 	
+@RequestMapping("customer")
+public class CustomerController {
+
+	@Autowired
+	private CustomerService customerService;
+	
+	@RequestMapping("loadAllCustomer")
+	public DataGridView loadAllCustomer(CustomerVo customerVo) {
+		return customerService.queryAllCustomer(customerVo);
+	}
+	
+	@RequestMapping("addCustomer")
+	public ResultObj addCustomer(CustomerVo customerVo) {
+		ResultObj resultObj = null;
+		try {
+			customerService.addCustomer(customerVo);
+			resultObj = new ResultObj(1,SYSConstast.SYS_OPTION_ADD_SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultObj = new ResultObj(0,SYSConstast.SYS_OPTION_ADD_ERROR);
+		}
+		
+		return resultObj;
+	}
+	
+	@RequestMapping("updateCustomer")
+	public ResultObj updateCustomer(CustomerVo customerVo) {
+		ResultObj resultObj = null;
+		try {
+			customerService.updateCustomer(customerVo);
+			resultObj = new ResultObj(1,SYSConstast.SYS_OPTION_UPDATE_SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultObj = new ResultObj(0,SYSConstast.SYS_OPTION_UPDATE_ERROR);
+		}
+		
+		return resultObj;
+	}
+	
+	@RequestMapping("deleteCustomer")
+	public ResultObj deleteCustomer(CustomerVo customerVo) {
+		ResultObj resultObj = null;
+		try {
+			customerService.deleteCustomer(customerVo.getId());
+			resultObj = new ResultObj(1,SYSConstast.SYS_OPTION_DELETE_SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultObj = new ResultObj(0,SYSConstast.SYS_OPTION_DELETE_ERROR);
+		}
+		
+		return resultObj;
+	}
+	
+	@RequestMapping("batchDeleteCustomer")
+	public ResultObj batchDeleteCustomer(CustomerVo customerVo) {
+		String batchIds = customerVo.getBatchIds();
+		String[] ids = batchIds.split(",");
+		ResultObj resultObj = null;
+		try {
+			for (String id : ids) {
+				customerService.deleteCustomer(Integer.parseInt(id));
+			}
+			resultObj = new ResultObj(1,SYSConstast.SYS_OPTION_DELETE_SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultObj = new ResultObj(0,SYSConstast.SYS_OPTION_DELETE_ERROR);
+		}
+		
+		return resultObj;
+	}
+	
+}

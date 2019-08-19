@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<frameset cols="220,*" border="1" frameborder="yes">
+    <frame src="/bus/toInportLeftManager" name="left"/>
+    <frame src="/bus/toInportRightManager" name="main"/>
+</frameset>
+</html>

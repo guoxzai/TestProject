@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8">
+	<title>销售管理</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" type="text/css" href="/resources/zTree/css/metroStyle/metroStyle.css">
+	<link rel="stylesheet" href="/resources/layui/css/layui.css" media="all" />
+	<link rel="stylesheet" href="/resources/css/public.css" media="all" />
+	<script type="text/javascript" src="/resources/zTree/js/jquery-1.4.4.min.js"></script>
+	<script type="text/javascript" src="/resources/zTree/js/jquery.ztree.core.js"></script>
+</head>
+<body class="childrenBody">
+	<!-- 查询开始 -->
+	<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+  	<legend>查询条件</legend>
+	</fieldset>
+	<form class="layui-form"  id="searchFrm">
+	  <div class="layui-form-item">
+	    <div class="layui-inline">
+	      <label class="layui-form-label">商品名称</label>
+	      <div class="layui-input-inline">
+	        <input type="text" name="goodsname"  autocomplete="off" placeholder="请输入商品名称" class="layui-input">
+	      </div>
+	    </div>
+	    <div class="layui-inline">
+	      <label class="layui-form-label">客户名称</label>
+	      <div class="layui-input-inline">
+	        <input type="text" name="customername"  autocomplete="off" placeholder="请输入客户名称" class="layui-input">
+	      </div>
+	    </div>
+	    <div class="layui-inline">
+	      <label class="layui-form-label">操作人员</label>
+	      <div class="layui-input-inline">
+	        <input type="text" name="operateperson" autocomplete="off" placeholder="操作人员" class="layui-input">
+	      </div>
+	    </div>
+	  </div>
+	  <div class="layui-form-item" style="text-align: center;">
+	    <div class="layui-input-block">
+	      <button type="button" class="layui-btn" id="doSearch">查询</button>
+	      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+	    </div>
+	  </div>
+	</form>
+	<!-- 查询结束 -->
+	
+	<!-- 数据表格开始 -->
+	<table class="layui-hide" id="salesList" lay-filter="salesList"></table>
+	<div id="toolBar" style="display: none;" lay-filter="toolBar">
+		<button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="update">修改</button>
+		<button type="button" class="layui-btn  layui-btn-sm layui-btn-danger" lay-event="delete">删除</button>
+	</div>
+	<div id="tableToolBar" style="display: none;" lay-filter="tableToolBar">
+		<button type="button" class="layui-btn layui-btn-sm" lay-event="add">添加销售</button>
+		<button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDelete">批量删除</button>
+	</div>
+	<!-- 数据表格结束 -->
+	
+	<script src="/resources/layui/layui.js" charset="utf-8"></script>
+	
+	<!-- 添加修改的弹出层  开始 -->
+	<div style="display: none;" id="addAndUpdateSales">
+		<form class="layui-form"  id="dataFrm" lay-filter="dataFrm" style="margin: 10px;margin-top: 30px">
+			
+			<div class="layui-form-item">
+			    <div class="layui-inline">
+				      <label class="layui-form-label">客户</label>
+				      <div class="layui-input-inline">
+				      <input type="hidden" name="id">
+				      <input type="hidden" name="oldNumber" id="oldNumber"/>
+				       <select name="customerid" id="customerid" lay-filter="customerid"  lay-verify="required" >
+		                 	<option value="">请选择客户</option>
+					    </select>
+				    </div>
+		 		 </div>
+		  	</div>
+		  	
+			<div class="layui-form-item">
+			    <div class="layui-inline">
+			      <label class="layui-form-label">供应商</label>
+			      <div class="layui-input-inline">
+			         <select name="providerid" id="providerid" lay-filter="providerid"  lay-verify="required" >
+	                 	<option value="">请选择供应商</option>
+				     </select>
+			      </div>
+			    </div>
+			    <div class="layui-inline">
+			      <label class="layui-form-label">商品名称</label>
+			      <div class="layui-input-inline">
+			       <select name="goodsid" id="goodsid"  lay-verify="required" >
+	                 	<option value="">请选择商品</option>
+				     </select>
+			      </div>
+			    </div>
+			 </div>
+			 
+		     <div class="layui-form-item">
+			    <div class="layui-inline">
+			      <label class="layui-form-label">销售时间</label>
+			      <div class="layui-input-inline">
+			      	<input type="text" name="salestime" id="salestime"  autocomplete="off" placeholder="请选择销售时间" class="layui-input">
+			      </div>
+			    </div>
+			    <div class="layui-inline">
+			      <label class="layui-form-label">销售数量</label>
+			      <div class="layui-input-inline">
+			      <input type="number" name="number" id="number" autocomplete="off" placeholder="请输入销售数量" class="layui-input">
+			      </div>
+			    </div>
+			 </div>
+			 
+		     <div class="layui-form-item">
+			    <div class="layui-inline">
+			      <label class="layui-form-label">销售价格</label>
+			      <div class="layui-input-inline">
+			      	<input type="text" name="saleprice" autocomplete="off" placeholder="请输入销售价格" class="layui-input">
+			      </div>
+			    </div>
+			 </div>
+			 
+		    <div class="layui-form-item">
+				<label class="layui-form-label">支付类型</label>
+				<div class="layui-input-block">
+					<input type="radio" name="paytype" value="0" title="微信" >
+					<input type="radio" name="paytype" value="1" title="支付宝">
+					<input type="radio" name="paytype" value="2" title="银联">
+				</div>
+			</div>
+			
+			<div class="layui-form-item">
+		      <label class="layui-form-label">商品描述</label>
+		      <div class="layui-input-block">
+		         <textarea name="remark" placeholder="请输入描述信息" class="layui-textarea"></textarea>
+		      </div>
+		    </div>
+			  	<div class="layui-form-item" style="text-align: center;">
+				    <div class="layui-input-block">
+				      <button type="button" class="layui-btn" lay-submit="" lay-filter="doSubmit">保存</button>
+				      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+				    </div>
+			    </div>
+		</form>
+	
+	</div>
+	<!-- 添加修改的弹出层  结束 -->
+	
+	
+	<script type="text/javascript">
+	
+	var tableIns;//数据表格实例
+		layui.use([ 'element', 'layer', 'jquery', 'form', 'table','laydate','laydate' ],
+				function() {
+					var element = layui.element;
+					var layer = layui.layer;
+					var $ = layui.jquery;
+					var laydate = layui.laydate;
+					var form = layui.form;
+					var table = layui.table;
+					var laydate=layui.laydate;
+					
+					laydate.render({
+						elem : "#salestime",
+						type : "datetime"
+					});
+					
+					 tableIns=table.render({
+					    elem: '#salesList'  //指渲染的目标  
+					    ,url:'/sales/loadAllRightSales'//请求地址
+					    ,cellMinWidth: 80 //全局定义常规单元格的最小宽度
+					    ,height:'full-200'//设置高度    
+					 	,page:true//开启分页
+					 	,title:"用户列表"  //设置导出execl时的标题
+					 	,text:"查询无数据" //如果列表里面数据为空时显示的数据
+					 	,toolbar:"#tableToolBar"//设置显示工具条并设置表头左边的工具类
+					 	,defaultToolbar:['filter','print']  //设置默认工具条的显示和顺序
+					    ,cols: [ [
+					       {type:'checkbox'}
+					      ,{field:'id',  title: '销售ID',width:90, sort: true,align:"center"}
+					      ,{field:'operateperson',  title: '操作人员',width:120, align:"center"}
+					      ,{field:'customerid',  title: '客户id',hide:true}
+					      ,{field:'customername',  title: '客户名称',width:120,align:"center"}
+					      ,{field:'goodsid',  title: '商品id',hide:true}
+					      ,{field:'goodsname',  title: '商品名称',width:150,align:"center"}
+					      ,{field:'salestime',  title: '销售时间',width:160,align:"center"}
+					      ,{field:'number',  title: '销售数量',width:110,align:"center"}
+					      ,{field:'saleprice',  title: '销售价格',width:110,align:"center"}
+					      ,{field:'paytype',  title: '支付方式',width:90,align:"center",templet:function(d){
+					    	  return d.paytype==0?'微信':d.paytype==1?"支付宝":"银联";
+					      }}
+					      ,{field:'remark',  title: '备注信息',width:160,align:"center"}
+					      ,{ title: '操作', toolbar:"#toolBar",align:"center",fixed:"right"}
+					    ] ]
+					 	,text: {
+					  	    none: '亲！暂无相关数据' //默认：无数据。注：该属性为 layui 2.2.5 开始新增
+					    }
+					  });
+					  //查询
+					  $("#doSearch").click(function(){
+						  var params=$("#searchFrm").serialize();
+						  tableIns.reload({url: '/sales/loadAllRightSales?'+params});
+					  });
+					//监听行表头工具栏的事件
+					  table.on('toolbar(salesList)', function(obj){
+						    switch(obj.event){
+						      case 'add':
+						    	  openAddSales();
+						      break;
+						      
+						      case 'batchDelete':
+						    	  var checkStatus = table.checkStatus('salesList');//test就是<table id="test">
+							        var data = checkStatus.data;
+							        var number;
+							        var goodsid;
+									//console.log(typeof checkStatus.data+"-->"+checkStatus.data.length);
+							        var batchIds="";
+							        for(var i=0;i<data.length;i++){
+							        	batchIds+=data[i].id+",";
+							        	number = data[i].number;
+							        	goodsid = data[i].goodsid;
+							        }
+							        
+							        var ids = batchIds.substring(0,batchIds.length-1);
+						        	layer.confirm('确定删除销售ID为'+ids+'的信息吗吗？',{icon:3, title:'提示信息'},function(index){
+							            $.post("/sales/batchDeleteSales",{
+							            	batchIds : ids  //将需要删除的id作为参数传入
+							            	,number:number
+							                ,goodsid:goodsid
+							            },function(data){
+							           	   layer.msg(data.msg);
+							               layer.close(index);
+							           	   tableIns.reload();
+							            },"json");
+							        });  
+						      break;
+						    };
+						  });
+					//监听行工具栏的事件
+					  table.on('tool(salesList)', function(obj){
+						  var data = obj.data; //获得当前行数据
+						    switch(obj.event){
+						      case 'delete':
+						    	deleteSalesById(data);
+						      break;
+						      case 'update':
+						      	openUpdateSales(data);
+						      break;
+						    };
+						  });
+					
+						function deleteSalesById(data){
+							layer.confirm('确定删销售ID为'+data.id+'的信息？',{icon:3, title:'提示信息'},function(index){
+					            $.post("/sales/deleteSales",{
+					                id : data.id  //将需要删除的id作为参数传入
+					                ,number:data.number
+					                ,goodsid:data.goodsid
+					            },function(data){
+					           	   layer.msg(data.msg);
+					               layer.close(index); 
+					           	   tableIns.reload();
+					            },"json");
+					       });
+						}					
+					
+					    var url;//提交的url
+						var index;//弹出层的索引
+						//打开添加用户的弹出层
+						function openAddSales(){
+							url="/sales/addSales";
+							index=layer.open({
+								type:1,//弹出层的类型
+								title:'添加销售',
+								content:$("#addAndUpdateSales"),  //type=1时使用
+								skin:'layui-layer-molv',//设置皮肤
+								area: ['700px', '570px'],//设置宽高
+								shade:0.5,//设置遮罩的透明度
+								shadeClose:true,//设置点击遮罩是否关闭弹出层
+								maxmin:true, //是否显示最大化和最小化的按钮  该参数值对type:1和type:2有效
+								success:function(){
+									$("#dataFrm")[0].reset();
+									
+									initCustomerid($("#customerid"));
+									initProviderSelect($("#providerid"));
+								}
+							})
+						}
+						
+						//打开修改的弹出层
+						function openUpdateSales(data){
+							url="/sales/updateSales";
+							index=layer.open({
+								type:1,//弹出层的类型
+								title:'修改销售',
+								content:$("#addAndUpdateSales"),  //type=1时使用
+								skin:'layui-layer-lan',//设置皮肤
+								area: ['700px', '570px'],//设置宽高
+								shade:0.5,//设置遮罩的透明度
+								shadeClose:true,//设置点击遮罩是否关闭弹出层
+								maxmin:true, //是否显示最大化和最小化的按钮  该参数值对type:1和type:2有效
+								success:function(){
+									 form.val("dataFrm",data);
+									 initCustomerid($("#customerid"),function(){
+										 $("#customerid").val(data.customerid);
+									 });
+									 
+									 initGoodsSelect($("#goodsid"),function(){
+										$("#goodsid").val(data.goodsid); 
+									 });
+			                     
+									 $.post("/goods/loadGoodsById",{id:data.goodsid},function(obj){
+										initProviderSelect($("#providerid"),function(){
+											 $("#providerid").val(obj.providerid);
+											 form.render();
+										 });
+									 },"json");
+									 
+									 $("#oldNumber").val($("#number").val());
+								}	 
+							});
+						}
+						 form.on('submit(doSubmit)', function(data){
+							 alert( $("#oldNumber").val());
+					            var params=$("#dataFrm").serialize();
+					            $.post(url,params,function(obj){
+					   				layer.msg(obj.msg);
+					   				layer.close(index);
+					   				//刷新表格
+					   				tableIns.reload();
+					            })
+					            return false;
+					        });
+						
+						function initCustomerid(elem,fn){
+							  $.post("/customer/loadAllCustomerForList",function(data){
+								  var html = "<option value=''>---请选择客户---</option>";
+								  for(var i=0;i<data.length;i++){
+									  html+="<option value="+data[i].id+">"+data[i].customername+"</option>";
+								  }
+								  
+								  elem.html(html);
+								  if(fn!=undefined){
+									  fn();
+								  }
+								  form.render();
+							  },"json");
+						  }
+						
+						
+						 //监控供应商下拉事件
+				        form.on("select(providerid)",function(data){
+				        	var providerid=data.value;
+				        	$.post("/goods/loadGoodsByProviderId",{providerid:providerid},function(obj){
+				        		$("#goodsid").html("<option value=''>---请选择商品---</option>");
+				        		for(var i=0;i<obj.length;i++){
+				        			$("#goodsid").append("<option value="+obj[i].id+" > "+obj[i].goodsname+"-"+obj[i].size+" </option>")
+				        		}
+				        		form.render("select");
+				        	});
+				        });
+				        
+				        
+				        function initGoodsSelect(elem,fun){
+				        	elem.html("");
+				        	$.post("/goods/loadAllGoodsForList",function(obj){
+				        		elem.append("<option value=''>---请选择商品---</option>");
+				        		for(var i=0;i<obj.length;i++){
+					        		elem.append("<option value="+obj[i].id+" > "+obj[i].goodsname+" </option> ");
+				        		}
+				        		
+				        		if(fun!=undefined){
+				        			fun();
+				        		}
+				        		
+				        		form.render();
+				        	});
+				        }
+				        
+				        //初始化下拉列表里面的值
+				        function initProviderSelect(elem,fun){
+				        	$.post("/provider/loadAllProviderForList?available=1",function(obj){
+				        		elem.html("<option value=''>---请选择供应商---</option>");
+				            	for(var i=0;i<obj.length;i++){
+				            		var o=obj[i];
+				            		elem.append("<option value="+o.id+" > "+o.providername+" </option> ");
+				            	}
+				            	form.render("select");
+				            	if(fun!= undefined ){
+				            		fun();
+				            	}
+				            });
+				        }
+				});
+		//刷新表格
+		function reloadTable(id){
+			if(id!=null){
+				tableIns.reload({url: '/sales/loadAllRightSales?customerid='+id});
+			}else{
+				tableIns.reload({url: '/sales/loadAllRightSales'});
+			}
+		}
+		
+		
+		
+	</script>
+</body>
+</html>

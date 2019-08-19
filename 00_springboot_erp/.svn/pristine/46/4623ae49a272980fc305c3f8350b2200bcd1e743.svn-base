@@ -1,0 +1,7 @@
+package com.gxz.sys.vo;
+
+import com.gxz.sys.domain.User;
+
+public class UserVo extends User {
+
+}

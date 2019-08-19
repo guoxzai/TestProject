@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>供应商管理</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="../resources/layui/css/layui.css" media="all" />
+	<link rel="stylesheet" href="../resources/css/public.css" media="all" />
+	<style type="text/css">
+		.layui-btn {
+		    height: 30px;
+		    line-height: 30px;
+		}
+	</style>
+</head>
+<body class="childrenBody">
+<!-- 模糊查询条件开始 -->
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+  <legend>查询条件</legend>
+</fieldset>
+<form class="layui-form" action="" style="text-align: center;" id="searchFrm">
+	 <div class="layui-form-item">
+    <div class="layui-inline">
+      <label class="layui-form-label">供应商名称</label>
+      <div class="layui-input-inline">
+        <input type="text" name="providername" autocomplete="off" placeholder="请输入供应商名称" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-inline">
+      <label class="layui-form-label">供应商电话</label>
+      <div class="layui-input-inline">
+        <input type="text" name="telephone" id="telephone" autocomplete="off" placeholder="请输入供应商电话" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-inline">
+      <label class="layui-form-label">联系人</label>
+      <div class="layui-input-inline">
+        <input type="tel" name="connectionperson" id="connectionperson" autocomplete="off" placeholder="请输入联系人" class="layui-input">
+      </div>
+    </div>
+    
+    <div class="layui-inline">
+	    <div class="layui-input-inline">
+	      <button type="button" id="doSearch" class="layui-btn" lay-submit="" lay-filter="doSearch">查询</button>
+	      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+	    </div>
+  	</div>
+  </div>
+  
+  
+</form>
+<!-- 模糊查询条件结束 -->
+
+<!-- 添加修改弹出层开始 -->
+<div id="editProvider" style="display: none;">
+	<form class="layui-form"  id="dataFrm" lay-filter="dataFrm" style="margin: 10px">
+			<div class="layui-form-item">
+				<div class="layui-inline">
+					<label class="layui-form-label">供应商名称</label>
+					<div class="layui-input-inline">
+						<input type="hidden" name="id">
+						<input type="tel" name="providername" lay-verify="required"
+							autocomplete="off" placeholder="请输入供应商名称" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label">公司电话</label>
+					<div class="layui-input-inline">
+						<input type="text" name="telephone" lay-verify="required"
+							autocomplete="off" placeholder="请输入公司电话" class="layui-input">
+					</div>
+				</div>
+			</div>
+			
+			<div class="layui-form-item">
+			    <label class="layui-form-label">邮编</label>
+			    <div class="layui-input-inline">
+			      <input type="text" name="zip" lay-verify="required" placeholder="请输入邮编" autocomplete="off" class="layui-input">
+			    </div>
+			 </div>
+			 
+			<div class="layui-form-item">
+				<label class="layui-form-label">公司地址</label>
+				<div class="layui-input-block">
+					<input type="text" name="address" lay-verify="required"
+						autocomplete="off" placeholder="请输入公司地址" class="layui-input">
+				</div>
+			</div>
+			
+			<div class="layui-form-item">
+				<div class="layui-inline">
+					<label class="layui-form-label">联系人</label>
+					<div class="layui-input-inline">
+						<input type="text" name="connectionperson" lay-verify="required"
+							autocomplete="off" placeholder="请输入联系人" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label">联系人电话</label>
+					<div class="layui-input-inline">
+						<input type="text" name="phone" lay-verify="required"
+							autocomplete="off" placeholder="请输入联系人电话" class="layui-input">
+					</div>
+				</div>
+			</div>
+			
+			<div class="layui-form-item">
+			    <label class="layui-form-label">邮箱</label>
+			    <div class="layui-input-inline">
+			      <input type="text" name="email" lay-verify="required" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
+			    </div>
+			    <div class="layui-form-mid layui-word-aux">请填写有效的邮箱</div>
+			 </div>
+			
+			<div class="layui-form-item">
+				<div class="layui-inline">
+					<label class="layui-form-label">开户银行</label>
+					<div class="layui-input-inline">
+						<input type="text" name="bank" lay-verify="required"
+							autocomplete="off" placeholder="请输入开户银行" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label">账号</label>
+					<div class="layui-input-inline">
+						<input type="text" name="account" lay-verify="required"
+							autocomplete="off" placeholder="请输入账号" class="layui-input">
+					</div>
+				</div>
+			</div>
+			
+			<div class="layui-form-item">
+			    <label class="layui-form-label">传真</label>
+			    <div class="layui-input-inline">
+			      <input type="text" name="fax"  lay-verify="required" placeholder="请输入传真" autocomplete="off" class="layui-input">
+			    </div>
+			 </div>
+			 
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否有效</label>
+				<div class="layui-input-block">
+					<input type="radio" name="available" value="1" title="是">
+	      			<input type="radio" name="available" value="0" title="否">
+				</div>
+			</div>
+			
+			<div class="layui-form-item" style="text-align: center;">
+			    <div class="layui-input-block">
+			      <button type="button" class="layui-btn" lay-submit="" lay-filter="doSubmit">编辑</button>
+			      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+			    </div>
+	    	</div>
+	</form>
+</div>
+<!-- 添加修改弹出层结束 -->
+
+
+<!-- 查看供应商开始 -->
+<div id="showProviderContent" style="padding: 10px;display: none;">
+<h2 align="center" id="showTitle"></h2>
+	<hr>
+	<div style="text-align: right;">
+		发布时间:<span id="showTime"></span>
+		发布人:<span id="showOpername"></span>
+	</div>
+	<hr>
+	<hr>
+	<div id="showContent">
+	</div>
+</div>
+<!-- 查看供应商结束-->
+
+
+<!-- 数据表单开始 -->
+<table  id="providerdata" lay-filter="test"></table>
+ 
+<div id="tabletoolbar" style="display: none;" lay-filter="tabletoolbar">
+	<button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add">添加供应商</button>
+	<button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDelete">批量删除</button>
+</div>
+
+<div id="toolbar" style="display: none;" lay-filter="toolbar">
+	<button class="layui-btn" lay-event="update"><i class="layui-icon ">&#xe642;</i></button>
+	<button class="layui-btn layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i></button>
+</div>
+<!-- 数据表单结束 -->
+ 
+<script src="../resources/layui/layui.js"></script>
+<script>
+layui.use(['jquery','table','form'], function(){
+  var $ = layui.jquery;
+  var table = layui.table;
+  var form = layui.form;
+  
+  //第一个实例
+  var tableIns = table.render({
+    elem: '#providerdata'
+    ,cellMinWidth: 80
+    ,height: 'full-250'
+    ,url: '/provider/loadAllProvider' //数据接口
+    ,page: true //开启分页
+    , done: function(curr, count){
+    	layer.msg("欢迎来到供应商管理");
+      }
+  	,limit:8
+  	,limits:[5,10,15,20,25,30,50]
+  	,toolbar:"#tabletoolbar"
+  	,defaultToolbar: ['filter', 'print']
+    ,cols: [ [ //表头
+       {type:'checkbox'}
+      ,{field: 'id', title: '供应商ID',width:90, align:'center'}
+      ,{field: 'providername', title: '供应商名称',align:'center'}
+      ,{field: 'zip', title: '供应商邮编',align:'center'}
+      ,{field: 'address', title: '供应商地址',align:'center'} 
+      ,{field: 'telephone', title: '供应商电话',align:'center'} 
+      ,{field: 'connectionperson', title: '联系人',align:'center'} 
+      ,{field: 'phone', title: '联系人电话',align:'center'} 
+      ,{field: 'bank', title: '开户行',width:120,align:'center'} 
+      ,{field: 'account', title: '账号',width:160,align:'center'} 
+      ,{field: 'email', title: '邮箱',align:'center'} 
+      ,{field: 'fax', title: '供应商传真',width:110,align:'center'} 
+      ,{field:'available', width:180, title: '是否可用', width:100,templet:function(d){
+    	  return d.available==1?"<font color='green'>可用</font>":"<font color='red'>不可用</font>";
+      },align:'center'}
+      ,{title:'操作',width:180,	align:'center',toolbar:'#toolbar',fixed: 'right'}
+    ] ]
+  	,text: {
+  	    none: '亲！暂无相关数据' //默认：无数据。注：该属性为 layui 2.2.5 开始新增
+    }
+    
+  });
+  
+  $("#doSearch").click(function(){
+	  var params =  $("#searchFrm").serialize();
+	  tableIns.reload({url:"/provider/loadAllProvider?"+params});
+  });
+  
+  table.on('toolbar(test)', function(obj){
+	  switch(obj.event){
+	    case 'add':
+	      toAddProvider();
+	    break;
+	    case 'batchDelete':
+			var checkStatus = table.checkStatus('providerdata');//test就是<table id="test">
+	        
+	        var data = checkStatus.data;
+			//console.log(typeof checkStatus.data+"-->"+checkStatus.data.length);
+	        var batchIds="";
+	        for(var i=0;i<data.length;i++){
+	        	batchIds+=data[i].id+",";
+	        }
+	        
+	        var ids = batchIds.substring(0,batchIds.length-1);
+        	layer.confirm('确定删除ID为'+ids+'供应商吗？',{icon:3, title:'提示信息'},function(index){
+	            $.post("/provider/batchDeleteProvider",{
+	            	batchIds : ids  //将需要删除的id作为参数传入
+	            },function(data){
+	           	   tableIns.reload();
+	           	   layer.msg(data.msg);
+	               layer.close(index);
+	            },"json");
+	        }); 
+	       break;
+	    break;
+	  };
+	});
+  
+  table.on('tool(test)', function(obj){
+	  var data = obj.data;
+	  switch(obj.event){
+	    case 'update':
+	    	toUpdateProvider(data);
+	    break;
+	    case 'select':
+	    	selectProviderObj(data);
+	    break;
+	    case 'delete':
+	    	layer.confirm('确定删除供应商ID为'+data.id+'的信息？',{icon:3, title:'提示信息'},function(index){
+	            $.post("/provider/deleteProvider",{
+	                id : data.id  //将需要删除的id作为参数传入
+	            },function(data){
+	           	   tableIns.reload();
+	           	   layer.msg(data.msg);
+	               layer.close(index); 
+	            },"json");
+	       });
+	    break;
+	  };
+  });
+  
+  var url;
+  var index;
+  function toAddProvider(){
+	  	url="/provider/addProvider";
+		index=layer.open({
+			type:1,//弹出层的类型
+			title:'添加供应商',
+			content:$("#editProvider"),  //type=1时使用
+			skin:'layui-layer-lan',//设置皮肤
+			area: ['800px', '600px'],//设置宽高
+			shade:0.5,//设置遮罩的透明度
+			shadeClose:true,//设置点击遮罩是否关闭弹出层
+			maxmin:true, //是否显示最大化和最小化的按钮  该参数值对type:1和type:2有效
+			success:function(){
+				$("#dataFrm")[0].reset();
+			}
+		});
+  }
+  
+  function toUpdateProvider(data){
+		url="/provider/updateProvider";
+		index=layer.open({
+			type:1,//弹出层的类型
+			title:'修改供应商',
+			content:$("#editProvider"),  //type=1时使用
+			skin:'layui-layer-molv',//设置皮肤
+			area: ['800px', '600px'],//设置宽高
+			shade:0.5,//设置遮罩的透明度
+			shadeClose:true,//设置点击遮罩是否关闭弹出层
+			maxmin:true, //是否显示最大化和最小化的按钮  该参数值对type:1和type:2有效
+			success:function(){
+			    form.val("dataFrm",data);  
+			    form.render(); 
+			}
+		});
+  }
+  
+  form.on('submit(doSubmit)', function(data){
+	  var params = $("#dataFrm").serialize();
+	 $.post(url,params,function(data){
+			  tableIns.reload();
+			  layer.msg(data.msg);
+			  layer.close(index); //再执行关闭   
+	  },"json"); 
+	    
+	  return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+	});
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+package com.gxz.bus.service;
+
+import com.gxz.bus.domain.Customer;
+import com.gxz.bus.vo.CustomerVo;
+import com.gxz.sys.utils.json.DataGridView;
+
+public interface CustomerService {
+	
+	DataGridView queryAllCustomer(CustomerVo customerVo);
+	
+	Customer queryCustomerById(Integer customerId);
+	
+	void addCustomer(CustomerVo customerVo);
+	
+	void updateCustomer(CustomerVo customerVo);
+	
+	void deleteCustomer(Integer customerId);
+}

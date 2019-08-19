@@ -1,0 +1,122 @@
+package com.gxz.sys.controller;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.gxz.sys.constast.SYSConstast;
+import com.gxz.sys.domain.Dept;
+import com.gxz.sys.service.DeptService;
+import com.gxz.sys.utils.json.DataGridView;
+import com.gxz.sys.utils.json.ResultObj;
+import com.gxz.sys.utils.json.TreeNode;
+import com.gxz.sys.vo.DeptVo;
+
+@RestController
+@RequestMapping("dept")
+public class DeptController {
+
+	@Autowired
+	private DeptService deptService;
+
+	@RequestMapping("loadAllDeptLeftJsonTree")
+	public List<TreeNode> loadAllDeptLeftJsonTree(DeptVo deptVo){
+		List<TreeNode> nodes = new ArrayList<TreeNode>();
+		List<Dept> depts = deptService.queryAllLeftDept(deptVo);
+		for (Dept dept : depts) {
+			Integer id = dept.getId();
+			Integer pid = dept.getPid();
+			String name = dept.getName();
+			Boolean isParent = dept.getParent()==SYSConstast.SYS_DEPT_ISPARENT_TRUE?true:false;
+			Boolean open = dept.getOpen()==SYSConstast.SYS_DEPT_OPEN_TRUE?true:false;
+			nodes.add(new TreeNode(id, pid, name, isParent, open));
+		}
+		
+		return nodes;
+	}
+	
+	@RequestMapping("loadAllRightDept")
+	public DataGridView loadAllRightDept(DeptVo deptVo) {
+		return deptService.queryAllRightDept(deptVo);
+	}
+	
+	@RequestMapping("addDept")
+	public ResultObj addDept(DeptVo deptVo) {
+		ResultObj obj = null;
+		try {
+			deptService.addDept(deptVo);
+			obj = new ResultObj(1, SYSConstast.SYS_OPTION_ADD_SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			obj = new ResultObj(0, SYSConstast.SYS_OPTION_ADD_ERROR);
+		}
+		return obj;
+	}
+	
+	@RequestMapping("updateDept")
+	public ResultObj updateDept(DeptVo deptVo) {
+		ResultObj obj = null;
+		try {
+			deptService.updateDept(deptVo);
+			obj = new ResultObj(1, SYSConstast.SYS_OPTION_ADD_SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			obj = new ResultObj(0, SYSConstast.SYS_OPTION_ADD_ERROR);
+		}
+		return obj;
+	}
+	
+	/**
+	 * 根据Id查询当前有没有子节点
+	 */
+	@RequestMapping("isExistChildren")
+	public Map<String,Object> isExistChildren(DeptVo deptVo){
+		Map<String,Object> map = new HashMap<>();
+		Integer childrenCount = deptService.queryDeptChildren(deptVo.getId());
+		boolean flag = childrenCount>0?true:false;
+		map.put("value", flag);
+		return map;
+	}
+	
+	/**
+	 * 删除存在的文件
+	 */
+	@RequestMapping("deleteDeptById")
+	public ResultObj deleteDeptById(DeptVo deptVo) {
+		ResultObj obj = null;
+		try {
+			deptService.deleteDeptById(deptVo.getId());
+			obj = new ResultObj(1, SYSConstast.SYS_OPTION_DELETE_SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			obj = new ResultObj(0 , SYSConstast.SYS_OPTION_DELETE_ERROR);
+		}
+		
+		return obj;
+	}
+	
+	//批量删除
+	@RequestMapping("batchDeleteDept")
+	public ResultObj batchDeleteDept(DeptVo deptVo) {
+		String[] ids = deptVo.getBatchIds().split(",");
+		
+		ResultObj obj = null;
+		try {
+			for (String id : ids) {
+				deptVo.setId(Integer.parseInt(id));
+				deptService.deleteDeptById(deptVo.getId());
+			}
+			obj = new ResultObj(1, SYSConstast.SYS_OPTION_DELETE_SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			obj = new ResultObj(0 , SYSConstast.SYS_OPTION_DELETE_ERROR);
+		}
+		
+		return obj;
+	}
+}

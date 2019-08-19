@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gxz.bus.mapper.OutportMapper" >
+  <resultMap id="BaseResultMap" type="com.gxz.bus.domain.Outport" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="paytype" property="paytype" jdbcType="VARCHAR" />
+    <result column="outporttime" property="outporttime" jdbcType="TIMESTAMP" />
+    <result column="operateperson" property="operateperson" jdbcType="VARCHAR" />
+    <result column="number" property="number" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="providerid" property="providerid" jdbcType="INTEGER" />
+    <result column="goodsid" property="goodsid" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, paytype, outporttime, operateperson, number, remark, providerid, goodsid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from bus_outport
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from bus_outport
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.gxz.bus.domain.Outport" >
+    insert into bus_outport (paytype, outporttime, 
+      operateperson, number, remark, 
+      providerid, goodsid)
+    values (#{paytype,jdbcType=VARCHAR}, #{outporttime,jdbcType=TIMESTAMP}, 
+      #{operateperson,jdbcType=VARCHAR}, #{number,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, 
+      #{providerid,jdbcType=INTEGER}, #{goodsid,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.gxz.bus.domain.Outport" >
+    insert into bus_outport
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      
+      <if test="paytype != null" >
+        paytype,
+      </if>
+      <if test="outporttime != null" >
+        outporttime,
+      </if>
+      <if test="operateperson != null" >
+        operateperson,
+      </if>
+      <if test="number != null" >
+        number,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="providerid != null" >
+        providerid,
+      </if>
+      <if test="goodsid != null" >
+        goodsid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+     
+      <if test="paytype != null" >
+        #{paytype,jdbcType=VARCHAR},
+      </if>
+      <if test="outporttime != null" >
+        #{outporttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operateperson != null" >
+        #{operateperson,jdbcType=VARCHAR},
+      </if>
+      <if test="number != null" >
+        #{number,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="providerid != null" >
+        #{providerid,jdbcType=INTEGER},
+      </if>
+      <if test="goodsid != null" >
+        #{goodsid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.gxz.bus.domain.Outport" >
+    update bus_outport
+    <set >
+      <if test="paytype != null" >
+        paytype = #{paytype,jdbcType=VARCHAR},
+      </if>
+      <if test="outporttime != null" >
+        outporttime = #{outporttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operateperson != null" >
+        operateperson = #{operateperson,jdbcType=VARCHAR},
+      </if>
+      <if test="number != null" >
+        number = #{number,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="providerid != null" >
+        providerid = #{providerid,jdbcType=INTEGER},
+      </if>
+      <if test="goodsid != null" >
+        goodsid = #{goodsid,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.gxz.bus.domain.Outport" >
+    update bus_outport
+    set paytype = #{paytype,jdbcType=VARCHAR},
+      outporttime = #{outporttime,jdbcType=TIMESTAMP},
+      operateperson = #{operateperson,jdbcType=VARCHAR},
+      number = #{number,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR},
+      providerid = #{providerid,jdbcType=INTEGER},
+      goodsid = #{goodsid,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <resultMap id="MyBaseResultMap" type="com.gxz.bus.domain.Outport" extends="BaseResultMap" >
+    <result column="providername" property="providername" jdbcType="VARCHAR" />
+    <result column="goodsname" property="goodsname" jdbcType="VARCHAR" />
+  </resultMap>
+ <select id="queryAllOutport" resultMap="MyBaseResultMap">
+ 	select t1.*,t2.providername as providername,t3.goodsname as goodsname from bus_outport t1 inner join bus_provider t2
+ 	inner join bus_goods t3 on(t1.providerid = t2.id and t1.goodsid = t3.id)
+ 	<where>
+ 		<if test="providername!=null and providername!=''">
+ 			and providername like concat("%",#{providername},"%")
+ 		</if>
+ 		<if test="goodsname!=null and goodsname!=''">
+ 			and goodsname like concat("%",#{goodsname},"%")
+ 		</if>
+ 		<if test="starttime!=null">
+ 			and outporttime >= #{starttime}
+ 		</if>
+ 		<if test="endtime!=null">
+ 			and outporttime <![CDATA[<=]]> #{endtime} 
+ 		</if>
+ 	</where>
+ 	order by t1.outporttime desc
+ </select>
+</mapper>

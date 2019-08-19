@@ -1,0 +1,26 @@
+package com.gxz.bus.vo;
+
+import com.gxz.bus.domain.Sales;
+
+public class SalesVo extends Sales {
+
+	private Integer page;
+	private Integer limit;
+
+	public Integer getPage() {
+		return page;
+	}
+
+	public void setPage(Integer page) {
+		this.page = page;
+	}
+
+	public Integer getLimit() {
+		return limit;
+	}
+
+	public void setLimit(Integer limit) {
+		this.limit = limit;
+	}
+
+}
